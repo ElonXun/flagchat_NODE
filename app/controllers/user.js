@@ -10,7 +10,7 @@ var sms = require('../../service/sms');
 async function asyncSignup(req,res){
     var phoneNumber = req.body.phoneNumber
     var user = await User.findOne({
-       phoneNumber: phoneNumber
+       phoneNumber: phoneNumber,
     }).exec()
    
    var verifyCode = sms.getCode()
@@ -20,6 +20,7 @@ async function asyncSignup(req,res){
     }
     
     if(!user){
+        //用户表中没有该用户
         var accessToken = uuid.v4() 
 
         user = new User({
@@ -29,8 +30,15 @@ async function asyncSignup(req,res){
             accessToken: accessToken,
         })
     }else{
-        user.verifyCode = verifyCode
-
+        //用户表中已有该用户但未注册过
+        if(!user.password){
+            user.verifyCode = verifyCode
+        }else{
+            //该用户已注册过 返回 让其直接登录
+            obj.success = false;
+            res.json(obj);
+            return
+        }
     }
     
     try {
@@ -43,7 +51,7 @@ async function asyncSignup(req,res){
     }
 
     try {
-      sms.sendCode(verifyCode,phoneNumber,'SMS_67290438');
+    //  sms.sendCode(verifyCode,phoneNumber,'SMS_67290438');
 
     } catch(e) {
         console.log(e);
@@ -54,22 +62,31 @@ async function asyncSignup(req,res){
     
    
     console.log('success');
-   // res.send('success')
     obj.success = true;
     res.json(obj);
 
 }
 
+//注册发送验证码
 exports.signup = function(req,res,next) {
    asyncSignup(req,res)
 }
 
-exports.verify = function *(next) {
-	this.body = {
-		success: true
-	}
+//注册用验证验证码
+exports.verifyCode = function(req,res,next) {
+   asyncVerify(req,res)
 }
 
+//注册设置密码
+exports.setPassword = function(req,res,next) {
+   asyncVerify(req,res)
+}
+
+//验证登录
+
+exports.verifyLogin = function(req,res,next) {
+   asyncVerify(req,res)
+}
 
 exports.update = function *(next) {
 	this.body = {

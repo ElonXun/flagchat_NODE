@@ -8,7 +8,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
-var db = 'mongodb://localhost/flagchat-app'
+var db = 'mongodb://fmn:20141226@118.89.172.216/flagchat-app'
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(db);

@@ -7,6 +7,7 @@ var UserSchema = new mongoose.Schema({
 		unique: true,
 		type: String,
 	},
+    password: String,
     areaCode: String,//区号
     verifyCode: String,
     accessToken: String,
@@ -24,7 +25,7 @@ var UserSchema = new mongoose.Schema({
     		dafault: Date.now(),
     	},
     }
-
+  
 })
 
 UserSchema.pre('save', function(next){
