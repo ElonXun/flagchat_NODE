@@ -25,7 +25,8 @@ async function asyncSignup(req,res){
 
         user = new User({
             nickname: '未命名',
-            phoneNumber:xss(phoneNumber),
+            avatar: '默认头像',
+            phoneNumber: xss(phoneNumber),
             verifyCode: verifyCode,
             accessToken: accessToken,
         })
@@ -67,6 +68,111 @@ async function asyncSignup(req,res){
 
 }
 
+async function asyncVerifyCode(req,res) {
+   var phoneNumber = req.body.phoneNumber
+   var verifyCode  = req.body.verifyCode
+   
+   var obj = {
+      "success": false,
+        //"error_code":"NOT_LOGIN"
+   }
+
+   if (!verifyCode || !phoneNumber) {
+      obj.success = false
+      res.json(obj)
+
+      return
+   }
+
+   var user = await User.findOne({
+      phoneNumber: phoneNumber,
+      verifyCode: verifyCode,
+   }).exex()
+
+   if(!user) {
+     obj.success = false
+     res.json(obj)
+
+     return  
+   }else {
+
+     obj.success = true
+     obj.data = {
+        phoneNumber: user.phoneNumber,
+     }
+
+     res.json(obj)
+
+   }
+
+}
+
+async function asyncSetPassword(req,res){
+    var phoneNumber = req.body.phoneNumber
+    var password = req.body.password
+    
+    var obj = {
+      "success": false,
+        //"error_code":"NOT_LOGIN"
+    }
+
+    if(!phoneNumber || !password){
+        obj.success = false
+        res.json(obj)
+        return
+    }
+     
+
+   var query = { phoneNumber: phoneNumber }
+
+   var user = await User.findOneAndUpdate(query, { password: password ,verifyed: true })
+
+   obj.success = true
+   obj.data = {
+     accessToken: user.accessToken,
+     avatar: user.avatar,
+     nickname: user.nickname,
+   }
+   
+   res.json(obj)
+
+}
+
+async function asyncverifyLogin(req,res) {
+    var phoneNumber = req.body.phoneNumber
+    var password = req.body.password
+
+    var obj = {
+      "success": false,
+        //"error_code":"NOT_LOGIN"
+    }
+
+    if(!phoneNumber || !password){
+        obj.success = false
+        res.json(obj)
+        return
+    }
+
+    var user = await User.findOne({
+       phoneNumber: phoneNumber,
+       password: password,
+    }).exec()
+    
+    if(!user){
+       obj.success = false
+       res.json(obj)
+       return
+    }else {
+       obj.success = true
+       obj.data = {
+         accessToken: user.accessToken,
+         avatar: user.avatar,
+         nickname: user.nickname,
+       }
+       res.json(obj)
+    }
+}
+
 //注册发送验证码
 exports.signup = function(req,res,next) {
    asyncSignup(req,res)
@@ -74,18 +180,18 @@ exports.signup = function(req,res,next) {
 
 //注册用验证验证码
 exports.verifyCode = function(req,res,next) {
-   asyncVerify(req,res)
+   asyncVerifyCode(req,res)
 }
 
 //注册设置密码
 exports.setPassword = function(req,res,next) {
-   asyncVerify(req,res)
+   asyncSetPassword(req,res)
 }
 
 //验证登录
 
 exports.verifyLogin = function(req,res,next) {
-   asyncVerify(req,res)
+   asyncverifyLogin(req,res)
 }
 
 exports.update = function *(next) {

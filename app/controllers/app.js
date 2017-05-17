@@ -6,5 +6,14 @@ exports.signature = function *(next) {
 	}
 }
 
+exports.hasToken = function *(next) {
+	this.body = {
+		success: true  
+	}
+}
+
+
+
+
 
 
