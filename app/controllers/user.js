@@ -7,8 +7,8 @@ var User = mongoose.model('User');
 var uuid = require('uuid');
 var sms = require('../../service/sms');
 
-async function asyncSignup(req,res){
-    var phoneNumber = req.body.phoneNumber
+async function asyncSignUpCode(req,res){
+    var phoneNumber = xss(req.body.phoneNumber.trim())
     var user = await User.findOne({
        phoneNumber: phoneNumber,
     }).exec()
@@ -26,7 +26,7 @@ async function asyncSignup(req,res){
         user = new User({
             nickname: '未命名',
             avatar: '默认头像',
-            phoneNumber: xss(phoneNumber),
+            phoneNumber: phoneNumber,
             verifyCode: verifyCode,
             accessToken: accessToken,
         })
@@ -69,8 +69,8 @@ async function asyncSignup(req,res){
 }
 
 async function asyncVerifyCode(req,res) {
-   var phoneNumber = req.body.phoneNumber
-   var verifyCode  = req.body.verifyCode
+   var phoneNumber = xss(req.body.phoneNumber.trim())
+   var verifyCode  = xss(req.body.verifyCode.trim())
    
    var obj = {
       "success": false,
@@ -87,7 +87,7 @@ async function asyncVerifyCode(req,res) {
    var user = await User.findOne({
       phoneNumber: phoneNumber,
       verifyCode: verifyCode,
-   }).exex()
+   }).exec()
 
    if(!user) {
      obj.success = false
@@ -108,8 +108,8 @@ async function asyncVerifyCode(req,res) {
 }
 
 async function asyncSetPassword(req,res){
-    var phoneNumber = req.body.phoneNumber
-    var password = req.body.password
+    var phoneNumber = xss(req.body.phoneNumber.trim())
+    var password = xss(req.body.password.trim())
     
     var obj = {
       "success": false,
@@ -139,8 +139,8 @@ async function asyncSetPassword(req,res){
 }
 
 async function asyncverifyLogin(req,res) {
-    var phoneNumber = req.body.phoneNumber
-    var password = req.body.password
+    var phoneNumber = xss(req.body.phoneNumber.trim())
+    var password = xss(req.body.password.trim())
 
     var obj = {
       "success": false,
@@ -174,8 +174,8 @@ async function asyncverifyLogin(req,res) {
 }
 
 //注册发送验证码
-exports.signup = function(req,res,next) {
-   asyncSignup(req,res)
+exports.signUpCode = function(req,res,next) {
+   asyncSignUpCode(req,res)
 }
 
 //注册用验证验证码
@@ -189,7 +189,6 @@ exports.setPassword = function(req,res,next) {
 }
 
 //验证登录
-
 exports.verifyLogin = function(req,res,next) {
    asyncverifyLogin(req,res)
 }

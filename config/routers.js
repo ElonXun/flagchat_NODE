@@ -11,9 +11,10 @@ var App = require('../app/controllers/app');
 // 	presfix: '/api/1'
 // }) 
 
-Router.post('/u/signup',User.signup);
-Router.post('/u/verify',User.verify);
-Router.post('/u/update',User.update);
+Router.post('/u/signUpCode',User.signUpCode);
+Router.post('/u/verifyCode',User.verifyCode);
+Router.post('/u/setPassword',User.setPassword);
+Router.post('/u/verifyLogin',User.verifyLogin);
 
 Router.post('/signature',App.signature);
 
