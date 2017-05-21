@@ -20,6 +20,7 @@
     "speakeasy": "^2.0.0",
     "super-alidayu": "^2.0.0",
     "uuid": "^3.0.1",
+    "wantu": "0.0.1",
     "xss": "^0.3.3"
   },
   "devDependencies": {
