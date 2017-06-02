@@ -18,7 +18,7 @@ Router.post('/u/setPassword',User.setPassword);
 Router.post('/u/verifyLogin',User.verifyLogin);
 
 // 第三方
-Router.post('/wantu/getToken',Wantu.getToken);
+Router.post('/wantu/getToken',App.hasToken,Wantu.getToken);
 
 Router.post('/signature',App.signature);
 

@@ -1,6 +1,9 @@
 'use strict';
 
 var express = require('express');
+// var session = require('express-session');
+// var RedisStore = require('connect-redis')(session);
+
 var path = require('path');
 // var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -12,6 +15,7 @@ var db = 'mongodb://fmn:20141226@118.89.172.216/flagchat-app'
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(db);
+
 var models_path = path.join(__dirname, '/app/models');
 require('./app/models/user');
 
@@ -19,11 +23,19 @@ require('./app/models/user');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+var App = require('./app/controllers/app'); 
 var router = require('./config/routers');
 
 
 var app = express();
-
+// app.use(session({
+//     store: new RedisStore({
+//     	host:'118.89.172.216',
+//     	port:'6379',
+//     	pass:'20141226xyf',
+//     }),
+//     secret: 'flagchat'
+// }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,7 +51,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/api/v1',router);
+app.use('/api/v1',App.hasBody,router);
 
 
 

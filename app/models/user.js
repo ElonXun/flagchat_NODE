@@ -15,6 +15,7 @@ var UserSchema = new mongoose.Schema({
          default: false,
     },
     accessToken: String,
+    refreshToken: String,
     nickname: String,
     gender: String,
     age: String,
